@@ -92,97 +92,111 @@ public class WhatsappRepository {
 
     public int sendMessage(Message message, User sender, Group group) throws Exception {
         // check if group exists and determine the group to send to
-        if (personalChatMap.containsKey(group)) {
+        try{
+            if (personalChatMap.containsKey(group)) {
 
-            // check if user is a member of the group
-            if (personalChatMap.get(group).contains(sender)) {
-                List<Message> messageList = personalChatMessageMap.getOrDefault(group, new ArrayList<>());
-                messageList.add(message);
-                personalChatMessageMap.put(group, messageList);
+                // check if user is a member of the group
+                try{
+                    if (personalChatMap.get(group).contains(sender)) {
+                        List<Message> messageList = personalChatMessageMap.getOrDefault(group, new ArrayList<>());
+                        messageList.add(message);
+                        personalChatMessageMap.put(group, messageList);
 
-                List<Message> sendersMessages = senderMap.getOrDefault(sender, new ArrayList<>());
-                sendersMessages.add(message);
-                senderMap.put(sender, sendersMessages);
+                        List<Message> sendersMessages = senderMap.getOrDefault(sender, new ArrayList<>());
+                        sendersMessages.add(message);
+                        senderMap.put(sender, sendersMessages);
+                    }
+                } catch (Exception e){
+                    System.out.println("You are not allowed to send message");
+                }
 
-                return personalChatMessageMap.get(group).size();
-            } else {
-                throw new Exception("You are not allowed to send message");
+            } else if (groupUserMap.containsKey(group)) {
+
+                // check if user is a member of the group
+                try{
+                    if (groupUserMap.get(group).contains(sender)) {
+                        List<Message> messageList = groupMessageMap.getOrDefault(group, new ArrayList<>());
+                        messageList.add(message);
+                        groupMessageMap.put(group, messageList);
+
+                        List<Message> sendersMessages = senderMap.getOrDefault(sender, new ArrayList<>());
+                        sendersMessages.add(message);
+                        senderMap.put(sender, sendersMessages);
+                    }
+                } catch (Exception e){
+                    System.out.println("You are not allowed to send message");
+                }
+
             }
-        } else if(groupUserMap.containsKey(group)) {
-
-            // check if user is a member of the group
-            if (groupUserMap.get(group).contains(sender)) {
-                List<Message> messageList = groupMessageMap.getOrDefault(group, new ArrayList<>());
-                messageList.add(message);
-                groupMessageMap.put(group, messageList);
-
-                List<Message> sendersMessages = senderMap.getOrDefault(sender, new ArrayList<>());
-                sendersMessages.add(message);
-                senderMap.put(sender, sendersMessages);
-
-                return groupMessageMap.get(group).size();
-            } else {
-                throw new Exception("You are not allowed to send message");
-            }
+        } catch (Exception e) {
+            System.out.println("Group does not exist");
         }
 
-        throw new Exception("Group does not exist");
+        if (group.getNumberOfParticipants() > 2) {
+            return personalChatMessageMap.get(group).size();
+        }
+        return groupMessageMap.get(group).size();
     }
 
     public String changeAdmin(User approver, User user, Group group) throws Exception {
         // check if group exists and determine the type of group
-        if (personalChatMap.containsKey(group)) {
-
-
-            if (personalChatMap.get(group).contains(user)) {  // check if user is a member of the group
-                if (adminMap.get(group) == approver) { // check if approver is the admin of the group
-                    adminMap.put(group, user);
-                } else {
-                    throw new Exception("Approver does not have rights");
-                }
-            } else {
-                throw new Exception("User is not a participant");
-            }
-        } else if(groupUserMap.containsKey(group)) {
-
-            // check if user is a member of the group
-            if (groupUserMap.get(group).contains(user)) {
-                if (adminMap.get(group) == approver) {
-                    adminMap.put(group, user);
-                } else {
-                    throw new Exception("Approver does not have rights");
-                }
-            } else {
-                throw new Exception("User is not a participant");
-            }
-        }
-
-        throw new Exception("Group does not exist");
-    }
-
-    public int removeUser(User user) throws Exception {
-        if (!adminMap.containsValue(user)) {
-            for (Map.Entry<Group, User> groupUserEntry: adminMap.entrySet()) {
-                if (groupUserEntry.getValue() == user) {
-                    Group group = groupUserEntry.getKey();
-
-                    if (group.getNumberOfParticipants() == 2) {
-                        personalChatMap.get(group).remove(user);
-                        personalChatMessageMap.remove(user);
+        try {
+            if (personalChatMap.containsKey(group)) {
+                try{
+                    if (personalChatMap.get(group).contains(user)) {  // check if user is a member of the group
+                        try{
+                            if (adminMap.get(group) == approver) { // check if approver is the admin of the group
+                                adminMap.put(group, user);
+                            }
+                        } catch (Exception e){
+                            return "Approver does not have rights";
+                        }
                     }
+                }catch (Exception e){
+                    return "User is not a participant";
+                }
+            } else if (groupUserMap.containsKey(group)) {
+
+                // check if user is a member of the group
+                try{
+                    if (groupUserMap.get(group).contains(user)) {
+                        try{
+                            if (adminMap.get(group) == approver) {
+                                adminMap.put(group, user);
+                            }
+                        } catch (Exception e){
+                           return "Approver does not have rights";
+                        }
+                    }
+                } catch (Exception e){
+                    return "User is not a participant";
                 }
             }
+        } catch (Exception e) {
+            return "Group does not exist";
         }
 
-        throw new Exception("Cannot remove admin");
-
+        return "SUCCESS";
     }
+
+//    public int removeUser(User user) throws Exception {
+//        if (!adminMap.containsValue(user)) {
+//            for (Map.Entry<Group, User> groupUserEntry: adminMap.entrySet()) {
+//                if (groupUserEntry.getValue() == user) {
+//                    Group group = groupUserEntry.getKey();
+//
+//                    if (group.getNumberOfParticipants() == 2) {
+//                        personalChatMap.get(group).remove(user);
+//                        personalChatMessageMap.remove(user);
+//                    }
+//                }
+//            }
+//        }
+//
+//        throw new Exception("Cannot remove admin");
+//
+//    }
 
 }
 
-/*
-todo
-- determine the admin
-- determine the type of group
-- get group name
- */
+// TODO exception handling
