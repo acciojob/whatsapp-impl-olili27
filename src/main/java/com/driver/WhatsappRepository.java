@@ -90,7 +90,7 @@ public class WhatsappRepository {
         return this.messageId;
     }
 
-    public int sendMessage(Message message, User sender, Group group) throws Exception {
+    public String sendMessage(Message message, User sender, Group group) throws Exception {
         // check if group exists and determine the group to send to
         try{
             if (personalChatMap.containsKey(group)) {
@@ -107,7 +107,7 @@ public class WhatsappRepository {
                         senderMap.put(sender, sendersMessages);
                     }
                 } catch (Exception e){
-                    System.out.println("You are not allowed to send message");
+                    return "You are not allowed to send message";
                 }
 
             } else if (groupUserMap.containsKey(group)) {
@@ -124,18 +124,18 @@ public class WhatsappRepository {
                         senderMap.put(sender, sendersMessages);
                     }
                 } catch (Exception e){
-                    System.out.println("You are not allowed to send message");
+                   return  "You are not allowed to send message";
                 }
 
             }
         } catch (Exception e) {
-            System.out.println("Group does not exist");
+            return "Group does not exist";
         }
 
         if (group.getNumberOfParticipants() > 2) {
-            return personalChatMessageMap.get(group).size();
+            return personalChatMessageMap.get(group).size() + "";
         }
-        return groupMessageMap.get(group).size();
+        return groupMessageMap.get(group).size() + "";
     }
 
     public String changeAdmin(User approver, User user, Group group) throws Exception {
