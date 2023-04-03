@@ -13,13 +13,13 @@ public class UserRepository {
     }
 
     static public String createUser(String name, String mobile) throws Exception {
-            if (!userDb.containsKey(mobile)) {
-                User newUser = new User(name, mobile);
-                userDb.put(mobile, newUser);
+            if (userDb.containsKey(mobile)) {
 
-                return "SUCCESS";
-            } else {
                 return ("User already exists");
             }
+            User newUser = new User(name, mobile);
+            userDb.put(mobile, newUser);
+
+         return "SUCCESS";
     }
 }
