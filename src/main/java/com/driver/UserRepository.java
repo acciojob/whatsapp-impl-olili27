@@ -16,9 +16,10 @@ public class UserRepository {
             if (!userDb.containsKey(mobile)) {
                 User newUser = new User(name, mobile);
                 userDb.put(mobile, newUser);
+
+                return "SUCCESS";
             } else {
                 return ("User already exists");
             }
-            return "SUCCESS";
     }
 }
