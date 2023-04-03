@@ -92,11 +92,9 @@ public class WhatsappRepository {
 
     public int sendMessage(Message message, User sender, Group group) throws Exception {
         // check if group exists and determine the group to send to
-        try{
             if (personalChatMap.containsKey(group)) {
 
                 // check if user is a member of the group
-                try{
                     if (personalChatMap.get(group).contains(sender)) {
                         List<Message> messageList = personalChatMessageMap.getOrDefault(group, new ArrayList<>());
                         messageList.add(message);
@@ -105,15 +103,16 @@ public class WhatsappRepository {
                         List<Message> sendersMessages = senderMap.getOrDefault(sender, new ArrayList<>());
                         sendersMessages.add(message);
                         senderMap.put(sender, sendersMessages);
+
+                        return personalChatMessageMap.get(group).size();
                     }
-                } catch (Exception e){
+                else {
                     throw new Exception("You are not allowed to send message");
                 }
 
             } else if (groupUserMap.containsKey(group)) {
 
                 // check if user is a member of the group
-                try{
                     if (groupUserMap.get(group).contains(sender)) {
                         List<Message> messageList = groupMessageMap.getOrDefault(group, new ArrayList<>());
                         messageList.add(message);
@@ -122,61 +121,51 @@ public class WhatsappRepository {
                         List<Message> sendersMessages = senderMap.getOrDefault(sender, new ArrayList<>());
                         sendersMessages.add(message);
                         senderMap.put(sender, sendersMessages);
+
+                        return groupMessageMap.get(group).size();
                     }
-                } catch (Exception e){
+                else {
                     throw new Exception("You are not allowed to send message");
                 }
 
             }
-        } catch (Exception e) {
-            throw new Exception("Group does not exist");
-        }
 
-        if (group.getNumberOfParticipants() > 2) {
-            return personalChatMessageMap.get(group).size();
-        }
-        return groupMessageMap.get(group).size();
+            throw new Exception("Group does not exist");
     }
 
     public String changeAdmin(User approver, User user, Group group) throws Exception {
         // check if group exists and determine the type of group
-        try {
             if (personalChatMap.containsKey(group)) {
-                try{
                     if (personalChatMap.get(group).contains(user)) {  // check if user is a member of the group
-                        try{
                             if (adminMap.get(group) == approver) { // check if approver is the admin of the group
                                 adminMap.put(group, user);
+                                return "SUCCESS";
                             }
-                        } catch (Exception e){
+                            else {
                             return "Approver does not have rights";
                         }
                     }
-                }catch (Exception e){
+                else {
                     return "User is not a participant";
                 }
             } else if (groupUserMap.containsKey(group)) {
 
                 // check if user is a member of the group
-                try{
                     if (groupUserMap.get(group).contains(user)) {
-                        try{
                             if (adminMap.get(group) == approver) {
                                 adminMap.put(group, user);
+                                return "SUCCESS";
                             }
-                        } catch (Exception e){
+                        else {
                            return "Approver does not have rights";
                         }
                     }
-                } catch (Exception e){
+                 else {
                     return "User is not a participant";
                 }
             }
-        } catch (Exception e) {
-            return "Group does not exist";
-        }
 
-        return "SUCCESS";
+            return ("Group does not exist");
     }
 
 //    public int removeUser(User user) throws Exception {
