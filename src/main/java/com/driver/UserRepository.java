@@ -13,8 +13,9 @@ public class UserRepository {
     }
 
     static public String createUser(String name, String mobile) throws Exception {
-            if (!userDb.containsKey(mobile)) {
-                User newUser = new User(name, mobile);
+        User newUser = new User(name, mobile);
+            if (!userDb.containsValue(newUser)) {
+//                User newUser = new User(name, mobile);
                 userDb.put(mobile, newUser);
                 return "SUCCESS";
             }
