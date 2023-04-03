@@ -41,13 +41,7 @@ public class WhatsappController {
     }
 
     @PutMapping("/send-message")
-    public String sendMessage(Message message, User sender, Group group) throws Exception{
-        try{
-            whatsappService.sendMessage(message, sender, group);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-
+    public int sendMessage(Message message, User sender, Group group) throws Exception{
         return whatsappService.sendMessage(message, sender, group);
     }
     @PutMapping("/change-admin")

@@ -19,7 +19,7 @@ public class WhatsappService {
         return whatsappRepository.createMessage(content);
     }
 
-    public String sendMessage(Message message, User sender, Group group) throws Exception {
+    public int sendMessage(Message message, User sender, Group group) throws Exception {
         return whatsappRepository.sendMessage(message, sender, group);
     }
 
