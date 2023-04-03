@@ -17,7 +17,7 @@ public class UserRepository {
                 User newUser = new User(name, mobile);
                 userDb.put(mobile, newUser);
             } else {
-                return ("User already exists");
+                throw new Exception("User already exists");
             }
             return "SUCCESS";
     }
